@@ -56,18 +56,30 @@ pipeline {
             }
         }
 
-    stage('Deploy Canary') {
-        steps {
-            withCredentials([usernamePassword(
-                credentialsId: 'deploy-idpw',
-                usernameVariable: 'SSH_USER',
-                passwordVariable: 'SSH_PASS'
-            )]) {
+        stage('Cleanup Jenkins Images') {
+            steps {
                 sh """
-                    sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no \
-                    $SSH_USER@${DEPLOY_SERVER} \
-                    'bash ${DEPLOY_PATH}/deploy.sh ${CANARY_TAG}'
+                    echo ">>> Jenkins 서버 기존 이미지 정리"
+                    docker images "${DOCKERHUB_REPO}" --format "{{.Repository}}:{{.Tag}}" | \
+                    grep -v "${CANARY_TAG}" | \
+                    xargs -r docker rmi -f || true
                 """
+            }
+        }
+
+        stage('Deploy Canary') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'deploy-idpw',
+                    usernameVariable: 'SSH_USER',
+                    passwordVariable: 'SSH_PASS'
+                )]) {
+                    sh """
+                        sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no \
+                        $SSH_USER@${DEPLOY_SERVER} \
+                        'bash ${DEPLOY_PATH}/deploy.sh ${CANARY_TAG}'
+                    """
+                }
             }
         }
     }
