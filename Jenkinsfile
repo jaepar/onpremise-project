@@ -5,7 +5,7 @@ pipeline {
         DOCKERHUB_REPO = "jaypark0205/recommendation-api"
         CANARY_TAG     = "canary-${GIT_COMMIT[0..6]}"
         DEPLOY_SERVER  = "172.21.33.26"
-        DEPLOY_USER    = "student"
+        DEPLOY_USER    = "sw_team_4"
         DEPLOY_PATH    = "/home/sw_team_4/ci-practice-deploy-server"
     }
 
