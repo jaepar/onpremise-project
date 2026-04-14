@@ -1,3 +1,24 @@
 spring:
   application:
     name: test
+
+  datasource:
+    url: jdbc:mysql://mysql:3306/recommendation?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: user
+    password: 1234
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: always
+  prometheus:
+    metrics:
+      export:
+        enabled: true
