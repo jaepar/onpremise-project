@@ -8,6 +8,8 @@ class TestApplicationTests {
 
 	@Test
 	void contextLoads() {
+		// 테스트 코드
+
 	}
 
 }

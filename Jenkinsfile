@@ -5,7 +5,7 @@ pipeline {
         DOCKERHUB_REPO = "jaypark0205/recommendation-api"
         CANARY_TAG     = "canary-${GIT_COMMIT[0..6]}"
         DEPLOY_SERVER  = "172.21.33.26"
-        DEPLOY_USER    = "student"
+        DEPLOY_USER    = "sw_team_4"
         DEPLOY_PATH    = "/home/sw_team_4/ci-practice-deploy-server"
     }
 
@@ -56,13 +56,28 @@ pipeline {
             }
         }
 
+        stage('Cleanup Jenkins Images') {
+            steps {
+                sh """
+                    echo ">>> Jenkins 서버 기존 이미지 정리"
+                    docker images "${DOCKERHUB_REPO}" --format "{{.Repository}}:{{.Tag}}" | \
+                    grep -v "${CANARY_TAG}" | \
+                    xargs -r docker rmi -f || true
+                """
+            }
+        }
+
         stage('Deploy Canary') {
             steps {
-                sshagent(['deploy-server']) {
+                withCredentials([usernamePassword(
+                    credentialsId: 'deploy-idpw',
+                    usernameVariable: 'SSH_USER',
+                    passwordVariable: 'SSH_PASS'
+                )]) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no \
-                            ${DEPLOY_USER}@${DEPLOY_SERVER} \
-                            'bash ${DEPLOY_PATH}/deploy.sh ${CANARY_TAG}'
+                        sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no \
+                        $SSH_USER@${DEPLOY_SERVER} \
+                        'bash ${DEPLOY_PATH}/deploy.sh ${CANARY_TAG}'
                     """
                 }
             }
