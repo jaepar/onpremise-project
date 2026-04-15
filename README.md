@@ -83,22 +83,22 @@ Spring Boot 3.3.5 기반의 상품 추천 API 서버입니다.
 
 ### 파이프라인 흐름
 
-```
-① Checkout       — GitHub에서 소스코드 pull
-② Build          — ./gradlew clean build -x test
-③ SonarQube      — ./gradlew sonar (정적 분석)
-④ Quality Gate   — SonarQube 분석 결과 대기 (5분 timeout, 실패 시 중단)
-⑤ Docker Build   — 이미지 빌드 및 DockerHub push
-                   태그: canary-{GIT_COMMIT 앞 7자리}
-⑥ Image Cleanup  — Jenkins 서버 기존 이미지 정리
-⑦ Deploy Canary  — SSH로 배포 서버 deploy.sh 실행
-                   ① stable 헬스체크 (실패 시 배포 중단)
-                   ② .env CANARY_TAG 업데이트
-                   ③ canary 이미지 pull & 컨테이너 재시작
-                   ④ canary 헬스체크 (실패 시 자동 롤백)
-                   ⑤ Nginx conf 교체 & reload (10% 트래픽 적용)
-⑧ Slack 알림     — 성공/실패 여부 #deploy 채널로 전송
-```
+
+| 단계 | Stage | 설명 |
+|------|-------|------|
+| 1. 코드 체크아웃 | `Checkout` | GitHub에서 소스코드 pull |
+| 2. 빌드 | `Build` | `./gradlew clean build -x test` |
+| 3. 정적 코드 분석 | `SonarQube Analysis` | `./gradlew sonar` 실행 → SonarQube에 분석 결과 전송 |
+| 4. Quality Gate | `Quality Gate` | SonarQube 분석 결과 대기 (5분 timeout)<br>Sonar way 4가지 조건 미충족 시 파이프라인 중단 |
+| 5. Docker 빌드 & 푸시 | `Docker Build & Push` | 이미지 빌드 후 DockerHub push<br>태그: `canary-{커밋해시 7자리}` |
+| 6. 이미지 정리 | `Cleanup Jenkins Images` | CI 서버에서 현재 태그 제외한 기존 이미지 삭제 |
+| 7. 카나리 배포 | `Deploy Canary` | SSH로 배포 서버 `deploy.sh` 실행 |
+
+**post**
+- 성공 → Slack `#deploy` 채널에 성공 알림
+- 실패 → Slack `#deploy` 채널에 실패 단계명 + 빌드 URL 알림
+
+
 `deploy.sh` 와 관련한 내용은 [Deploy Server README](https://github.com/sene03/ci-practice-deploy-server)에서 확인할 수 있습니다.
 
 
