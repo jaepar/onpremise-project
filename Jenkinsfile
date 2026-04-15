@@ -69,15 +69,11 @@ pipeline {
 
         stage('Deploy Canary') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'deploy-idpw',
-                    usernameVariable: 'SSH_USER',
-                    passwordVariable: 'SSH_PASS'
-                )]) {
+                sshagent(['deploy-server']) {
                     sh """
-                        sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no \
-                        $SSH_USER@${DEPLOY_SERVER} \
-                        'bash ${DEPLOY_PATH}/deploy.sh ${CANARY_TAG}'
+                        ssh -o StrictHostKeyChecking=no \
+                            ${DEPLOY_USER}@${DEPLOY_SERVER} \
+                            'bash ${DEPLOY_PATH}/deploy.sh ${CANARY_TAG}'
                     """
                 }
             }
