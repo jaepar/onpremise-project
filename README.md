@@ -16,8 +16,7 @@
 
 ## 🏗 Architecture
 
-![Uploading 스크린샷 2026-04-15 오후 2.21.57.png…]()
-
+<img width="1245" height="478" alt="스크린샷 2026-04-15 오후 2 21 57" src="https://github.com/user-attachments/assets/d3314887-1675-44fe-a43d-6c726a08b807" />
 
 
 
