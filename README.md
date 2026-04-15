@@ -53,7 +53,7 @@ Spring Boot 3.3.5 기반의 상품 추천 API 서버입니다.
 
 | Method | Path | 설명 |
 |--------|------|------|
-| GET | `/api/recommendations` | 추천 목록 조회 |
+| GET | `/recommendations` | 추천 목록 조회 |
 | GET | `/actuator/health` | 헬스체크 |
 | GET | `/actuator/prometheus` | Prometheus 메트릭 |
 
