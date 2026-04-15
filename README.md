@@ -16,7 +16,8 @@
 
 ## 🏗 Architecture
 
-<img width="1250" height="482" alt="스크린샷 2026-04-15 오후 2 02 20" src="https://github.com/user-attachments/assets/113a16cf-ecfc-47ec-a76f-fe9a48d5f1c6" />
+<img width="1261" height="476" alt="스크린샷 2026-04-15 오후 2 15 39" src="https://github.com/user-attachments/assets/5c43602d-ca63-4396-a66e-11bc3c3f162e" />
+
 
 
 ```
