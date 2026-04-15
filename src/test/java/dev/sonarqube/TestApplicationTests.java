@@ -10,6 +10,8 @@ class TestApplicationTests {
 	void contextLoads() {
 		// 테스트 코드
 
+
+
 	}
 
 }
