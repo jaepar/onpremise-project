@@ -117,6 +117,29 @@ canary-abc1234  →  canary-def5678  →  canary-ghi9012 ...
 - 신규 코드 커버리지, 버그, 취약점, 코드 스멜 기준을 충족하지 못하면 파이프라인이 자동 중단됩니다.
 - Quality Gate를 통과해야만 Docker 빌드 및 배포 단계로 진행됩니다.
 
+
+#### SonarQube Quality Gate · Sonar way 기준
+
+Sonar way는 SonarSource가 기본 제공하는 read-only Quality Gate로, **신규 코드(New Code)** 에만 조건을 적용하는 **Clean as You Code** 방식을 따릅니다.
+
+**신규 코드에 적용되는 4가지 조건:**
+
+기준이 충족되지 않을 시 Jenkins 파이프라인이 중단됩니다.
+
+| 조건 | 기준 |
+|------|------|
+| 신규 이슈 | 0건 초과 |
+| Security Hotspot 검토율 | 100% 미만 |
+| 신규 코드 테스트 커버리지 | 80% 미만 |
+| 신규 코드 중복률 | 3% 초과 |
+
+**선택 이유:**
+- 기존 레거시 코드를 전부 고치는 데 리소스를 쏟는 대신, **새로 작성하는 코드의 품질을 유지**하는 데 집중하는 전략
+- 별도 설정 없이 바로 적용 가능한 기본값
+
+**출처:** [SonarQube Server 10.8 Docs — Quality Gates](https://docs.sonarsource.com/sonarqube-server/10.8/instance-administration/analysis-functions/quality-gates)
+
+
 <br>
 
 ## 🐳 카나리 배포 적용 방법
