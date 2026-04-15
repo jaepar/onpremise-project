@@ -1,4 +1,4 @@
-# 🚀 On-Premise CI/CD Pipeline
+# On-Premise CI/CD Pipeline
 
 > Spring Boot 기반 추천 API 서비스에 Jenkins + SonarQube + Docker를 활용한 CI/CD 파이프라인과 Nginx 카나리 배포 전략을 적용한 프로젝트입니다.
 
