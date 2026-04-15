@@ -16,7 +16,7 @@
 
 ## 🏗 Architecture
 
-<img width="1245" height="478" alt="스크린샷 2026-04-15 오후 2 21 57" src="https://github.com/user-attachments/assets/d3314887-1675-44fe-a43d-6c726a08b807" />
+<img width="1366" height="529" alt="image" src="https://github.com/user-attachments/assets/48c8fe29-2e15-4f44-b26a-854f960aa37d" />
 
 
 
@@ -35,6 +35,10 @@ Developer
                  │    └─ Nginx reload (트래픽 분배 적용)
                  └─ Slack 알림 (#deploy)
 ```
+
+
+<img width="1472" height="1602" alt="image" src="https://github.com/user-attachments/assets/dd582db3-6be8-4535-813e-d5185871d498" />
+
 
 <br>
 
