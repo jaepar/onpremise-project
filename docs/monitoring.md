@@ -50,7 +50,9 @@ docker compose down
 
 ### 주요 쿼리
 
-#### Stable vs Canary 평균 응답시간 비교
+### Stable vs Canary 평균 응답시간 비교
+
+Canary 응답 시간이 급격히 증가하면 롤백의 근거로 활용할 수 있습니다.
 
 ```
 
@@ -60,9 +62,15 @@ sum(rate(http_server_requests_seconds_count{uri="/recommendations"}[1m])) by (ve
 
 ```
 
-Canary 응답 시간이 급격히 증가하면 롤백의 근거로 활용할 수 있습니다.
+### 보여주고 싶은 것:
 
-#### Stable vs Canary 에러율 비교
+  ▎ "새로 배포한 canary 버전이 기존 stable 버전보다 응답이 느려지진 않았는가?"
+
+    - stable과 canary의 응답시간을 같은 그래프에서 나란히 비교
+    - canary 선이 stable 선보다 급격히 올라가면 → 성능 문제 → 롤백
+
+
+### Stable vs Canary 에러율 비교
 
 ```
 
@@ -71,8 +79,14 @@ sum(rate(http_server_requests_seconds_count{uri="/recommendations", status=~"5..
 sum(rate(http_server_requests_seconds_count{uri="/recommendations"}[1m])) by (version)
 
 ````
+### 보여주고 싶은 것:
 
-Canary에서 5xx 에러율이 증가하면 즉시 감지할 수 있습니다.
+ ▎ "새로 배포한 canary 버전에서 에러가 발생하고 있진 않은가?"
+
+    - stable과 canary의 에러율을 같은 그래프에서 나란히 비교
+    - canary에서 에러율이 올라가면 → 기능 오류 → 롤백
+
+
 
 ---
 
