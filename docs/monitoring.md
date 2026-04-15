@@ -75,7 +75,7 @@ Canary 응답 시간이 급격히 증가하면 롤백의 근거로 활용할 수
   ```                                                                                                                                                                                 
   sum(rate(http_server_requests_seconds_sum{uri="/recommendations"}[1m])) by (instance)
   /
-  sum(rate(http_server_requests_seconds_count{uri="/recommendations"}[1m])) by (instance
+  sum(rate(http_server_requests_seconds_count{uri="/recommendations"}[1m])) by (instance)
 ```
 <img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/c1650125-fc50-4881-85a0-0ba9b5196118" />
 
