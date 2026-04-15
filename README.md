@@ -16,7 +16,8 @@
 
 ## 🏗 Architecture
 
-![Architecture Diagram](./docs/architecture.png)
+<img width="1250" height="482" alt="스크린샷 2026-04-15 오후 2 02 20" src="https://github.com/user-attachments/assets/113a16cf-ecfc-47ec-a76f-fe9a48d5f1c6" />
+
 
 ```
 Developer
