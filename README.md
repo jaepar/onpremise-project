@@ -16,8 +16,7 @@
 
 ## 🏗 Architecture
 
-<img width="1261" height="476" alt="스크린샷 2026-04-15 오후 2 15 39" src="https://github.com/user-attachments/assets/5c43602d-ca63-4396-a66e-11bc3c3f162e" />
-
+<img width="1250" height="482" alt="스크린샷 2026-04-15 오후 2 02 20" src="https://github.com/user-attachments/assets/113a16cf-ecfc-47ec-a76f-fe9a48d5f1c6" />
 
 
 ```
@@ -60,29 +59,26 @@ Spring Boot 3.3.5 기반의 상품 추천 API 서버입니다.
 
 ### 배포 전략 : 카나리 배포(Canary Deployment)
 
-카나리 배포를 선택한 이유는 다음과 같습니다.
 
-- **안전한 점진적 배포** : 전체 트래픽을 한 번에 전환하지 않고 소수 트래픽(10%)에 먼저 노출해 장애 영향 범위를 최소화할 수 있습니다.
-- **실시간 검증** : 새 버전을 실제 트래픽으로 검증하면서 Grafana 대시보드에서 응답시간, 에러율을 모니터링할 수 있습니다.
-- **즉각적 롤백** : 헬스체크 실패 시 자동으로 이전 버전으로 복구됩니다.
-- **무중단 배포** : `nginx -s reload`는 기존 커넥션을 유지한 채 새 설정을 적용하므로 서비스 중단이 없습니다.
+추천 API는 **추천 알고리즘의 품질이 사용자 경험에 직접 영향을 미치는 서비스**입니다.
 
-**트래픽 전환 단계**
+이번 프로젝트에서는 두 버전 간 실질적인 차이를 만들어 카나리 배포의 효과를 검증할 수 있도록 설계했습니다.
 
-```
-신규 배포
-  → canary 10% 적용 (자동)
-    → 모니터링 후 이상 없으면
-      → canary 50% 적용 (수동)
-        → 최종 확인 후
-          → canary 100% 전환 → stable 승격 (수동)
-```
+| 구분 | stable (v1) | canary (v2) |
+|------|------------|-------------|
+| 추천 방식 | 랜덤 추천 | 점수 기반 추천 알고리즘 |
+| 응답시간 | 빠름 | 알고리즘 연산으로 인한 지연 발생 |
+
+알고리즘 도입은 응답시간 증가를 수반하기 때문에 전체 트래픽을 한 번에 전환하면 위험합니다. 소수 트래픽(10%)에 먼저 노출해 Grafana에서 응답시간·에러율을 실시간 비교하고, k6 부하 테스트로 트래픽이 몰리는 상황을 시뮬레이션하면서 점진적으로 검증합니다. 이상 감지 시 Nginx conf 교체 한 번으로 즉시 롤백할 수 있습니다.
+
+
+
 
 <br>
 
 ## 🔧 Jenkins Pipeline
 
-Jenkinsfile은 애플리케이션 레포 루트에 위치하며, Jenkins가 GitHub Webhook을 통해 `main` 브랜치에 push가 발생하면 자동으로 실행됩니다.
+[Jenkinsfile](Jenkinsfile)은 GitHub Webhook을 통해 `main` 브랜치에 push가 발생하면 Jenkins를 통해 자동으로 실행됩니다.
 
 ### 파이프라인 흐름
 
@@ -100,9 +96,10 @@ Jenkinsfile은 애플리케이션 레포 루트에 위치하며, Jenkins가 GitH
                    ③ canary 이미지 pull & 컨테이너 재시작
                    ④ canary 헬스체크 (실패 시 자동 롤백)
                    ⑤ Nginx conf 교체 & reload (10% 트래픽 적용)
-                   → 자세한 내용: [Deploy Server README](https://github.com/sene03/ci-practice-deploy-server)
 ⑧ Slack 알림     — 성공/실패 여부 #deploy 채널로 전송
 ```
+`deploy.sh` 와 관련한 내용은 [Deploy Server README](https://github.com/sene03/ci-practice-deploy-server)에서 확인할 수 있습니다.
+
 
 ### 이미지 태그 전략
 
