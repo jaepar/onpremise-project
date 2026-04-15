@@ -50,41 +50,44 @@ docker compose down
 
 ### 주요 쿼리
 
-### Stable vs Canary 평균 응답시간 비교
+### Stable vs Canary 트래픽 비율 비교                                                                                                                                             
+                                                                                                                                                                                    
+  Nginx가 stable 90%, canary 10%로 트래픽을 실제로 분산하고 있는지 확인할 수 있습니다.                                                                                              
+```
+sum(rate(http_server_requests_seconds_count{uri="/recommendations"}[1m])) by (instance)            
+```                                                                                                                                                                                    
 
+<img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/7234f758-fadb-44ad-8e84-a68ba9a4715c" />
+
+### 보여주고 싶은 것:                                 
+
+  > "Nginx의 트래픽 분산이 설정대로 동작하고 있는가?"
+
+    - stable과 canary가 각각 받는 요청 수를 같은 그래프에서 나란히 비교
+    - stable 선이 canary 선보다 약 9배 높게 나타나면 → 90:10 분산 정상 동작
+
+
+---
+### Stable vs Canary 평균 응답시간 비교                                                                                                                                                                                                                                                                                        
 Canary 응답 시간이 급격히 증가하면 롤백의 근거로 활용할 수 있습니다.
-
+                                                                                                                                                                                    
+  > 특정 URI만 필터링해서 보기
+  ```                                                                                                                                                                                 
+  sum(rate(http_server_requests_seconds_sum{uri="/recommendations"}[1m])) by (instance)
+  /
+  sum(rate(http_server_requests_seconds_count{uri="/recommendations"}[1m])) by (instance
 ```
+  <img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/e44ba13c-ba73-4d22-9fd1-c0e269526ec7" />
 
-sum(rate(http_server_requests_seconds_sum{uri="/recommendations"}[1m])) by (instance)
-/
-sum(rate(http_server_requests_seconds_count{uri="/recommendations"}[1m])) by (instance)
+  ### 보여주고 싶은 것:
 
-```
+  > "새로 배포한 canary 버전이 기존 stable 버전보다 응답이 느려지진 않았는가?"
 
-### 보여주고 싶은 것:
-
-  ▎ "새로 배포한 canary 버전이 기존 stable 버전보다 응답이 느려지진 않았는가?"
-
-    - stable과 canary의 응답시간을 같은 그래프에서 나란히 비교
+    - `/recommendations` URI에 대한 stable과 canary의 평균 응답시간을 나란히 비교
     - canary 선이 stable 선보다 급격히 올라가면 → 성능 문제 → 롤백
 
 
-### Stable vs Canary 에러율 비교
 
-```
-
-sum(rate(http_server_requests_seconds_count{uri="/recommendations", status=~"5.."}[1m])) by (instance)
-/
-sum(rate(http_server_requests_seconds_count{uri="/recommendations"}[1m])) by (instance)
-
-````
-### 보여주고 싶은 것:
-
- ▎ "새로 배포한 canary 버전에서 에러가 발생하고 있진 않은가?"
-
-    - stable과 canary의 에러율을 같은 그래프에서 나란히 비교
-    - canary에서 에러율이 올라가면 → 기능 오류 → 롤백
 
 
 
