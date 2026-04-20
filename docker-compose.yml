@@ -1,0 +1,91 @@
+version: '3.8'
+
+# 모든 컨테이너가 소통할 가상 네트워크 정의
+networks:
+  app-network:
+    driver: bridge
+
+services:
+  # 1. Database
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    networks:
+      - app-network
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mydb
+    ports:
+      - "3306:3306"
+
+  # 2. Spring Boot V1 (기존 버전 - 90%)
+  spring-v1:
+    image: my-spring-app:latest  # 아까 빌드하신 이미지 이름
+    container_name: spring-v1
+    networks:
+      - app-network
+    environment:
+      - APP_VERSION=v1
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/mydb
+    depends_on:
+      - mysql
+
+  # 3. Spring Boot V2 (카나리 배포 버전 - 10%)
+  spring-v2:
+    image: my-spring-app:latest
+    container_name: spring-v2
+    networks:
+      - app-network
+    environment:
+      - APP_VERSION=v2
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/mydb
+    depends_on:
+      - mysql
+
+  # 4. Nginx (로드밸런서)
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    networks:
+      - app-network
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - spring-v1
+      - spring-v2
+
+  # 5. Prometheus (메트릭 수집)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    networks:
+      - app-network
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  # 6. Grafana (대시보드)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    networks:
+      - app-network
+    ports:
+      - "3000:3000"
+
+  # 7. cAdvisor (도커 컨테이너 모니터링)
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.0
+    container_name: cadvisor
+    networks:
+      - app-network
+    ports:
+      - "8091:8080" # Mac 충돌 방지용 8091 포트
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
